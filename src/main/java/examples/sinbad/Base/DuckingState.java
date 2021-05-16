@@ -3,7 +3,7 @@ package examples.sinbad.Base;
 import JmeStateMachine.State;
 import com.jme3.bullet.PhysicsSpace;
 
-public class DuckingState extends State {
+public class DuckingState extends SinbadBaseState {
     @Override
     protected void onEnter() {
 
@@ -30,8 +30,8 @@ public class DuckingState extends State {
     }
 
     @Override
-    public void controlUpdate(float tpf) {
-
+    public State controlUpdate(float tpf) {
+        return null;
     }
 
     @Override

@@ -47,7 +47,8 @@ public class Layer implements ActionListener, AnalogListener, PhysicsTickListene
     }
 
     protected void controlUpdate (float tpf) {
-        states.getFirst().controlUpdate(tpf);
+        State state = states.getFirst().controlUpdate(tpf);
+        enterState(state);
     }
 
     private void enterState (State state) {
@@ -56,6 +57,7 @@ public class Layer implements ActionListener, AnalogListener, PhysicsTickListene
                 states.removeFirst();
             }
         } else {
+            System.out.println("going to state: " + state.getClass().getSimpleName());
             state.onExit();
             states.addFirst(state);
             state.setSpatial(modelStateMachine.getSpatial());

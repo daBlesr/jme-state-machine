@@ -11,11 +11,15 @@ import com.jme3.scene.control.AbstractControl;
 
 import java.util.*;
 
+import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
+
 public class ModelStateMachine extends AbstractControl implements ActionListener, AnalogListener, PhysicsTickListener {
 
     private List<Layer> layers = new LinkedList<>();
 
-    public ModelStateMachine() { }
+    public ModelStateMachine() {
+        getPhysicsSpace().addTickListener(this);
+    }
 
     public void addLayer (Layer layer) {
         this.layers.add(layer);

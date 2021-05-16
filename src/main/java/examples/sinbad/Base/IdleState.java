@@ -4,7 +4,7 @@ import JmeStateMachine.State;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
 
-public class IdleState extends State {
+public class IdleState extends SinbadBaseState {
     @Override
     protected void onEnter() {
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
@@ -13,6 +13,11 @@ public class IdleState extends State {
 
     @Override
     protected State handleActionInput(String input, boolean isPressed, float tpf) {
+        if (input.equals("Walk Forward")) {
+            return new RunningState();
+        } else if (input.equals("Jump")) {
+            return new JumpState();
+        }
         return null;
     }
 
@@ -32,8 +37,8 @@ public class IdleState extends State {
     }
 
     @Override
-    public void controlUpdate(float tpf) {
-
+    public State controlUpdate(float tpf) {
+        return null;
     }
 
     @Override

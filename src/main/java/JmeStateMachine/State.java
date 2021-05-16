@@ -21,7 +21,7 @@ public abstract class State {
     abstract protected State prePhysicsTick(PhysicsSpace space, float timeStep);
     abstract protected void physicsTick(PhysicsSpace space, float timeStep);
 
-    public abstract void controlUpdate(float tpf);
+    public abstract State controlUpdate(float tpf);
 
     protected Void toPreviousState () {
         popState = true;

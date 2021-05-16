@@ -5,6 +5,7 @@ import JmeStateMachine.ModelStateMachine;
 import com.jme3.anim.SkinningControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.KeyInput;
@@ -18,6 +19,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
+import examples.sinbad.Base.IdleState;
+
+import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
 public class TestSinbadStateMachine extends SimpleApplication {
 
@@ -36,7 +40,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-
+        flyCam.setDragToRotate(true);
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(0, -0.5f, 0).normalizeLocal());
         dl.setColor(new ColorRGBA(0.9f, 0.9f, 0.9f, 1f).mult(0.5f));
@@ -51,6 +55,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
         cam.setLocation(new Vector3f(-6, 3, 0));
 
         BulletAppState bulletAppState = new BulletAppState();
+        bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
 
         Box box = new Box(100, 0.1f, 100);
@@ -69,15 +74,14 @@ public class TestSinbadStateMachine extends SimpleApplication {
         Node sinbad = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.j3o");
         sinbad.getControl(SkinningControl.class).getArmature().applyBindPose();
         sinbad.scale(0.5f);
+        sinbad.move(0, 2, 0);
 
         setupKeys();
         createSinbadStateMachine(sinbad);
 
-        n.attachChild(sinbad);
-        n.move(0, 2, 0);
         cam.lookAt(sinbad.getWorldTranslation(), Vector3f.UNIT_Y);
 
-        rootNode.attachChild(n);
+        rootNode.attachChild(sinbad);
     }
 
     private void setupKeys() {
@@ -109,13 +113,21 @@ public class TestSinbadStateMachine extends SimpleApplication {
     }
 
     private void createSinbadStateMachine (Node sinbad) {
+        CapsuleCollisionShape capsuleCollisionShape = new CapsuleCollisionShape(1.2f, 2.5f);
+        RigidBodyControl rbc = new RigidBodyControl(capsuleCollisionShape, 8.0f);
+        sinbad.addControl(rbc);
+
+        getPhysicsSpace().add(rbc);
+
         ModelStateMachine modelStateMachine = new ModelStateMachine();
 
-        Layer modelBaseLayer = new Layer();
-        Layer modelTopLayer = new Layer();
+        // first we add the control to Sinbad
+        sinbad.addControl(modelStateMachine);
 
+        Layer modelBaseLayer = new Layer();
         modelStateMachine.addLayer(modelBaseLayer);
-        modelStateMachine.addLayer(modelTopLayer);
+        modelBaseLayer.setInitialState(new IdleState());
+//        modelStateMachine.addLayer(modelTopLayer);
 
         inputManager.addListener(modelStateMachine, "Strafe Left", "Strafe Right");
         inputManager.addListener(modelStateMachine, "Rotate Left", "Rotate Right");
