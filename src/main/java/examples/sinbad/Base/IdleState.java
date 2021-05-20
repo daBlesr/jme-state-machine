@@ -1,48 +1,73 @@
 package examples.sinbad.Base;
 
 import JmeStateMachine.State;
+import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+
+import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
 public class IdleState extends SinbadBaseState {
+
+    Vector3f velocity = new Vector3f();
+
     @Override
     protected void onEnter() {
+        super.onEnter();
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
         animComposer.setCurrentAction("IdleBase");
+
+        getPhysicsSpace().addTickListener(this);
     }
 
     @Override
-    protected State handleActionInput(String input, boolean isPressed, float tpf) {
+    protected StateChange handleActionInput(String input, boolean isPressed, float tpf) {
+
         if (input.equals("Walk Forward")) {
-            return new RunningState();
+            return StateChange.to(new RunningState());
         } else if (input.equals("Jump")) {
-            return new JumpState();
+            return StateChange.to(new JumpState());
         }
         return null;
     }
 
     @Override
-    protected State handleAnalogInput(String input, float value, float tpf) {
+    protected StateChange handleAnalogInput(String input, float value, float tpf) {
+        if (input.equals("Walk Forward")) {
+            return StateChange.to(new RunningState());
+        } else if (input.equals("Rotate Left")) {
+            rotateLeft();
+        } else if (input.equals("Rotate Right")) {
+            rotateRight();
+        }
         return null;
     }
 
     @Override
-    protected State prePhysicsTick(PhysicsSpace space, float timeStep) {
-        return null;
+    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
+        super.prePhysicsTick(space, timeStep);
+        if (velocity.length() > FastMath.ZERO_TOLERANCE) {
+            rbc.setLinearVelocity(Vector3f.ZERO);
+        }
     }
 
     @Override
-    protected void physicsTick(PhysicsSpace space, float timeStep) {
-
+    public void physicsTick(PhysicsSpace space, float timeStep) {
+        super.physicsTick(space, timeStep);
+        rbc.getLinearVelocity(velocity);
     }
 
     @Override
-    public State controlUpdate(float tpf) {
+    public StateChange controlUpdate(float tpf) {
         return null;
     }
 
     @Override
     protected void onExit() {
-
+        getPhysicsSpace().removeTickListener(this);
     }
 }

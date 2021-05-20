@@ -1,13 +1,13 @@
 package JmeStateMachine;
 
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.scene.Spatial;
 
-public abstract class State {
+public abstract class State implements PhysicsTickListener {
 
-    private Layer layer;
+    protected Layer layer;
     protected Spatial spatial;
-    protected boolean popState = false;
 
     protected void setLayer (Layer layer) {
         this.layer = layer;
@@ -15,18 +15,10 @@ public abstract class State {
 
     abstract protected void onEnter ();
 
-    abstract protected State handleActionInput (String input, boolean isPressed, float tpf);
-    abstract protected State handleAnalogInput (String input, float value, float tpf);
+    abstract protected StateChange handleActionInput (String input, boolean isPressed, float tpf);
+    abstract protected StateChange handleAnalogInput (String input, float value, float tpf);
 
-    abstract protected State prePhysicsTick(PhysicsSpace space, float timeStep);
-    abstract protected void physicsTick(PhysicsSpace space, float timeStep);
-
-    public abstract State controlUpdate(float tpf);
-
-    protected Void toPreviousState () {
-        popState = true;
-        return null;
-    }
+    public abstract StateChange controlUpdate(float tpf);
 
     abstract protected void onExit ();
 

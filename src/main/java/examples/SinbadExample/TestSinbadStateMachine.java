@@ -6,10 +6,14 @@ import com.jme3.anim.SkinningControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -20,6 +24,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import examples.sinbad.Base.IdleState;
+import examples.sinbad.Base.PickUpSword;
+
+import java.util.Random;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
@@ -55,22 +62,34 @@ public class TestSinbadStateMachine extends SimpleApplication {
         cam.setLocation(new Vector3f(-6, 3, 0));
 
         BulletAppState bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(true);
+
+        bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
         stateManager.attach(bulletAppState);
 
-        Box box = new Box(100, 0.1f, 100);
+        Box box = new Box(40, 0.1f, 40);
         Geometry boxGeom = new Geometry("box", box);
         boxGeom.move(0, -0.4f, 0);
         Material boxMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        boxMat.setColor("Diffuse", ColorRGBA.DarkGray);
+
         boxGeom.setMaterial(boxMat);
         boxGeom.addControl(new RigidBodyControl(CollisionShapeFactory.createBoxShape(boxGeom), 0f));
         rootNode.attachChild(boxGeom);
         bulletAppState.getPhysicsSpace().add(boxGeom);
 
+        for (int i = 0; i < 10; i++) {
+            Box boxSmall = new Box(1, 1f, 1);
+            Geometry smallBoxGeom = new Geometry("box", boxSmall);
+            smallBoxGeom.move(2*i + 3, 0, 0);
+            Material smallBoxMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            smallBoxGeom.setMaterial(smallBoxMat);
+            smallBoxMat.setColor("Color", ColorRGBA.Blue);
+            RigidBodyControl rbc = new RigidBodyControl(CollisionShapeFactory.createBoxShape(smallBoxGeom), 0f);
+            rbc.setLinearVelocity(new Vector3f(5, 0, 0));
+            smallBoxGeom.addControl(rbc);
+            rootNode.attachChild(smallBoxGeom);
+            bulletAppState.getPhysicsSpace().add(smallBoxGeom);
+        }
 
-        Node n = new Node();
-        
         Node sinbad = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.j3o");
         sinbad.getControl(SkinningControl.class).getArmature().applyBindPose();
         sinbad.scale(0.5f);
@@ -78,10 +97,11 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
         setupKeys();
         createSinbadStateMachine(sinbad);
-
+        
         cam.lookAt(sinbad.getWorldTranslation(), Vector3f.UNIT_Y);
-
         rootNode.attachChild(sinbad);
+
+        addSword();
     }
 
     private void setupKeys() {
@@ -114,10 +134,9 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
     private void createSinbadStateMachine (Node sinbad) {
         CapsuleCollisionShape capsuleCollisionShape = new CapsuleCollisionShape(1.2f, 2.5f);
-        RigidBodyControl rbc = new RigidBodyControl(capsuleCollisionShape, 8.0f);
-        sinbad.addControl(rbc);
+        RigidBodyControl rbc = new RigidBodyControl(capsuleCollisionShape, 1.0f);
 
-        getPhysicsSpace().add(rbc);
+        sinbad.addControl(rbc);
 
         ModelStateMachine modelStateMachine = new ModelStateMachine();
 
@@ -129,9 +148,41 @@ public class TestSinbadStateMachine extends SimpleApplication {
         modelBaseLayer.setInitialState(new IdleState());
 //        modelStateMachine.addLayer(modelTopLayer);
 
-        inputManager.addListener(modelStateMachine, "Strafe Left", "Strafe Right");
-        inputManager.addListener(modelStateMachine, "Rotate Left", "Rotate Right");
-        inputManager.addListener(modelStateMachine, "Walk Forward", "Walk Backward");
-        inputManager.addListener(modelStateMachine, "Jump", "Duck");
+        inputManager.addListener(modelBaseLayer, "Rotate Left", "Rotate Right");
+        inputManager.addListener(modelBaseLayer, "Walk Forward", "Walk Backward");
+        inputManager.addListener(modelBaseLayer, "Jump", "Duck");
+
+        getPhysicsSpace().add(sinbad);
+
+        rbc.setAngularFactor(0);
+        rbc.setFriction(0);
+        rbc.setAngularDamping(0);
+
+        ChaseCamera chaseCam = new ChaseCamera(cam, sinbad, inputManager);
+        chaseCam.setEnabled(true);
+        chaseCam.setInvertHorizontalAxis(true);
+        chaseCam.setSmoothMotion(false);
+        chaseCam.setTrailingEnabled(false);
+        chaseCam.setLookAtOffset(new Vector3f(0, 0, 0));
+        chaseCam.setDefaultDistance(15);
+        chaseCam.setDefaultHorizontalRotation(0);
+        chaseCam.setToggleRotationTrigger(new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE),new KeyTrigger(KeyInput.KEY_L));
+        chaseCam.setZoomSensitivity(0);
+        chaseCam.setMaxDistance(15);
+        chaseCam.setMinDistance(15);
+    }
+
+    private void addSword() {
+        Node sword = (Node) assetManager.loadModel("Models/Sinbad/Sword.j3o");
+        sword.scale(0.5f);
+
+        rootNode.attachChild(sword);
+        sword.move(4, 0.2f, 4);
+
+        GhostControl ghostControl = new GhostControl(CollisionShapeFactory.createBoxShape(sword));
+        sword.addControl(ghostControl);
+
+        getPhysicsSpace().add(sword);
+
     }
 }

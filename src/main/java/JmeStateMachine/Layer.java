@@ -1,22 +1,18 @@
 package JmeStateMachine;
 
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 
 import java.util.LinkedList;
-import java.util.List;
 
-public class Layer implements ActionListener, AnalogListener, PhysicsTickListener {
+public class Layer implements ActionListener, AnalogListener {
 
     private ModelStateMachine modelStateMachine;
     private LinkedList<State> states = new LinkedList<>();
+    private LinkedList<StateChange> stateChangesQueue = new LinkedList<>();
 
     public void setInitialState (State state) {
-        this.states.add(state);
-        state.setSpatial(modelStateMachine.getSpatial());
-        state.onEnter();
+        enterState(state);
     }
 
     protected void setModelStateMachine (ModelStateMachine modelStateMachine) {
@@ -25,47 +21,69 @@ public class Layer implements ActionListener, AnalogListener, PhysicsTickListene
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        State state = states.getFirst().handleActionInput(name, isPressed, tpf);
-        enterState(state);
+        StateChange stateChange = states.getFirst().handleActionInput(name, isPressed, tpf);
+        if (stateChange != null) {
+            stateChangesQueue.add(stateChange);
+        }
     }
 
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        State state = states.getFirst().handleAnalogInput(name, value, tpf);
-        enterState(state);
-    }
-
-    @Override
-    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-        State state = states.getFirst().prePhysicsTick(space, timeStep);
-        enterState(state);
-    }
-
-    @Override
-    public void physicsTick(PhysicsSpace space, float timeStep) {
-        states.forEach(s -> s.physicsTick(space, timeStep));
+        StateChange stateChange = states.getFirst().handleAnalogInput(name, value, tpf);
+        if (stateChange != null) {
+            stateChangesQueue.add(stateChange);
+        }
     }
 
     protected void controlUpdate (float tpf) {
-        State state = states.getFirst().controlUpdate(tpf);
-        enterState(state);
+        StateChange stateChange = states.getFirst().controlUpdate(tpf);
+        if (stateChange != null) {
+            stateChangesQueue.add(stateChange);
+        }
+
+        stateChangesQueue.forEach(this::changeState);
+        stateChangesQueue.clear();
     }
 
-    private void enterState (State state) {
-        if (state == null) {
-            if (states.getFirst().popState) {
-                states.removeFirst();
+    private void changeState(StateChange stateChange) {
+        State currentState = getCurrentState();
+
+        if (stateChange instanceof StateChange.PoppedStateChange) {
+            State poppedState = states.removeFirst();
+            poppedState.onExit();
+
+            if (states.size() == 0) {
+                throw new IllegalStateException("popped last state. No state left.");
             }
-        } else {
-            System.out.println("going to state: " + state.getClass().getSimpleName());
-            state.onExit();
-            states.addFirst(state);
-            state.setSpatial(modelStateMachine.getSpatial());
-            state.onEnter();
+
+            enterState(getCurrentState());
+
+        } else if (stateChange instanceof StateChange.ToStateChange) {
+            currentState.onExit();
+
+            State newState = ((StateChange.ToStateChange) stateChange).getState();
+            enterState(newState);
+
+        } else if (stateChange instanceof StateChange.PushedStateChange) {
+            getCurrentState().onExit();
+
+            State pushedState = ((StateChange.PushedStateChange) stateChange).getState();
+            enterState(pushedState);
         }
+    }
+
+    private void enterState (State s) {
+        s.setSpatial(modelStateMachine.getSpatial());
+        s.setLayer(this);
+        s.onEnter();
+        states.addFirst(s);
     }
 
     public State getCurrentState() {
         return states.getFirst();
+    }
+
+    public boolean hasState(Class<?> stateClass) {
+        return states.stream().anyMatch(s -> s.getClass().equals(stateClass));
     }
 }
