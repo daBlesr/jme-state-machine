@@ -29,7 +29,7 @@ public class JumpState extends State {
             new ClipAction(animComposer.getAnimClip("JumpStart")),
             onFinishJumpLoopAction
         );
-        blendedStartToLoop.setSpeed(2f);
+        blendedStartToLoop.setSpeed(3f);
         delayedConsumer = new DelayedConsumer(onFinishJumpLoopAction);
         animComposer.addAction("EnterJump", blendedStartToLoop);
         animComposer.setCurrentAction("EnterJump");

@@ -24,13 +24,12 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import examples.sinbad.Base.IdleState;
-import examples.sinbad.Base.PickUpSword;
-
-import java.util.Random;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
 public class TestSinbadStateMachine extends SimpleApplication {
+
+    public static Node sword;
 
     public static void main(String[] args) {
         TestSinbadStateMachine app = new TestSinbadStateMachine();
@@ -97,7 +96,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
         setupKeys();
         createSinbadStateMachine(sinbad);
-        
+
         cam.lookAt(sinbad.getWorldTranslation(), Vector3f.UNIT_Y);
         rootNode.attachChild(sinbad);
 
@@ -133,6 +132,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
     }
 
     private void createSinbadStateMachine (Node sinbad) {
+
         CapsuleCollisionShape capsuleCollisionShape = new CapsuleCollisionShape(1.2f, 2.5f);
         RigidBodyControl rbc = new RigidBodyControl(capsuleCollisionShape, 1.0f);
 
@@ -146,11 +146,14 @@ public class TestSinbadStateMachine extends SimpleApplication {
         Layer modelBaseLayer = new Layer();
         modelStateMachine.addLayer(modelBaseLayer);
         modelBaseLayer.setInitialState(new IdleState());
-//        modelStateMachine.addLayer(modelTopLayer);
 
         inputManager.addListener(modelBaseLayer, "Rotate Left", "Rotate Right");
         inputManager.addListener(modelBaseLayer, "Walk Forward", "Walk Backward");
         inputManager.addListener(modelBaseLayer, "Jump", "Duck");
+
+        Layer headLayer = new Layer();
+        modelStateMachine.addLayer(headLayer);
+        headLayer.setInitialState(new examples.sinbad.Head.LookingAtSwordState());
 
         getPhysicsSpace().add(sinbad);
 
@@ -173,7 +176,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
     }
 
     private void addSword() {
-        Node sword = (Node) assetManager.loadModel("Models/Sinbad/Sword.j3o");
+        sword = (Node) assetManager.loadModel("Models/Sinbad/Sword.j3o");
         sword.scale(0.5f);
 
         rootNode.attachChild(sword);

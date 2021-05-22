@@ -9,7 +9,6 @@ import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 import java.util.List;
@@ -54,8 +53,8 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
         if (collisionWithSword != null) {
             Spatial sword = collisionWithSword;
             collisionWithSword = null;
-            if (!layer.hasState(PickUpSword.class)) {
-                return StateChange.push(new PickUpSword(sword));
+            if (!layer.hasState(PickUpSwordState.class)) {
+                return StateChange.push(new PickUpSwordState(sword));
             }
         }
         return null;
