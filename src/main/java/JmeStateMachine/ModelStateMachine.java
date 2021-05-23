@@ -1,6 +1,5 @@
 package JmeStateMachine;
 
-import com.jme3.anim.AnimComposer;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
@@ -27,13 +26,7 @@ public class ModelStateMachine extends AbstractControl {
     }
 
     @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-
-    }
-
-    private AnimComposer getAnimComposer () {
-        return getSpatial().getControl(AnimComposer.class);
-    }
+    protected void controlRender(RenderManager rm, ViewPort vp) { }
 
     public List<Layer> getLayers() {
         return layers;

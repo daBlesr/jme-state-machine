@@ -9,8 +9,8 @@ import java.util.List;
 public class Layer implements ActionListener, AnalogListener {
 
     private ModelStateMachine modelStateMachine;
-    private LinkedList<State> states = new LinkedList<>();
-    private LinkedList<StateChange> stateChangesQueue = new LinkedList<>();
+    private final LinkedList<State> states = new LinkedList<>();
+    private final LinkedList<StateChange> stateChangesQueue = new LinkedList<>();
 
     public void setInitialState (State state) {
         enterState(state);
@@ -22,7 +22,7 @@ public class Layer implements ActionListener, AnalogListener {
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        StateChange stateChange = states.getFirst().handleActionInput(name, isPressed, tpf);
+        StateChange stateChange = getCurrentState().handleActionInput(name, isPressed, tpf);
         if (stateChange != null) {
             stateChangesQueue.add(stateChange);
         }
@@ -30,14 +30,14 @@ public class Layer implements ActionListener, AnalogListener {
 
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        StateChange stateChange = states.getFirst().handleAnalogInput(name, value, tpf);
+        StateChange stateChange = getCurrentState().handleAnalogInput(name, value, tpf);
         if (stateChange != null) {
             stateChangesQueue.add(stateChange);
         }
     }
 
     protected void controlUpdate (float tpf) {
-        StateChange stateChange = states.getFirst().controlUpdate(tpf);
+        StateChange stateChange = getCurrentState().controlUpdate(tpf);
         if (stateChange != null) {
             stateChangesQueue.add(stateChange);
         }
