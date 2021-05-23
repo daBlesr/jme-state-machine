@@ -1,3 +1,38 @@
 # jme-state-machine
 
-Work in progress
+jMonkeyEngine state machine helps to define complex behaviour using states.
+
+Implementation and architecture are based on the book "Game Programming Patterns", chapter [State](https://gameprogrammingpatterns.com/state.html).
+In the examples directory, the code behind the video [demo](https://www.youtube.com/watch?v=UY6encoXvIE) is listed.
+
+The State Machine consists of four entities: *ModelStateMachine*, *Layer*, *State*, *StateChange*.
+One creates a state machine in jMonkeyEngine using the following:
+```
+ModelStateMachine modelStateMachine = new ModelStateMachine();
+spatial.addControl(modelStateMachine);
+```        
+To add a layer, one needs to set the default state.
+```
+Layer modelBaseLayer = new Layer();
+modelStateMachine.addLayer(modelBaseLayer);
+modelBaseLayer.setInitialState(new IdleState());
+```
+The idea is to go to a new state by one of the following methods:
+* `handleActionInput`
+* `handleAnalogInput`
+* `controlUpdate`
+
+There are multiple ways to change state. return on one of the above methods a StateChange instance by using either
+* `StateChange.to(new SomeOtherState())`
+* `StateChange.push(new TemporaryState())`
+* `StateChange.pop()`
+
+The state machine is a pushdown automaton, meaning it is possible to push a state temporarily on the stack (and afterwards pop it from that state). 
+In the video this happens, when Sinbad runs into the sword, it picks it up, and then returns back to the state it was doing.
+
+Create a class that extends the abstract State class, and you are good to go.
+When a state is entered, autmatically the `onEnter` method is called by the state machine. Likewise, on leaving a state, the `onExit` method is called.
+In these methods, initialize (and detach) bindings to physics tick listeners and start (and stop) animations.
+
+
+
