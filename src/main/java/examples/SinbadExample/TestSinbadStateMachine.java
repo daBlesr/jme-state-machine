@@ -42,8 +42,8 @@ public class TestSinbadStateMachine extends SimpleApplication {
         TestSinbadStateMachine app = new TestSinbadStateMachine();
         AppSettings settings = new AppSettings(true);
         settings.setFullscreen(false);
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(1880);
+        settings.setHeight(980);
         settings.setGammaCorrection(true);
         settings.setVSync(true);
         app.setShowSettings(false);
@@ -205,6 +205,5 @@ public class TestSinbadStateMachine extends SimpleApplication {
         mask.remove(getNeckArmature(armature));
         return mask;
     }
-
 
 }

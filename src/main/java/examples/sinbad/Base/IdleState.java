@@ -3,6 +3,7 @@ package examples.sinbad.Base;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.math.Vector3f;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
@@ -47,9 +48,7 @@ public class IdleState extends SinbadBaseState {
     @Override
     public void prePhysicsTick(PhysicsSpace space, float timeStep) {
         super.prePhysicsTick(space, timeStep);
-//        if (velocity.x > FastMath.ZERO_TOLERANCE || velocity.z > FastMath.ZERO_TOLERANCE) {
         physicsRigidBody.setLinearVelocity(new Vector3f(0, velocity.y, 0));
-//        }
     }
 
     @Override

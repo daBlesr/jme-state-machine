@@ -11,21 +11,20 @@ import com.jme3.anim.tween.action.BlendAction;
 import com.jme3.anim.tween.action.ClipAction;
 import com.jme3.anim.tween.action.LinearBlendSpace;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
-import examples.SinbadExample.TestSinbadStateMachine;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
-public class JumpState extends State {
+public class JumpState extends State implements PhysicsTickListener {
     private DelayedConsumer delayedConsumer;
     private boolean hasJumped = false;
 
     @Override
     protected void onEnter() {
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
-        Armature armature = getSpatial().getControl(SkinningControl.class).getArmature();
 
         OnFinishedEventAction onFinishJumpLoopAction = new OnFinishedEventAction(animComposer.getAnimClip("JumpLoop"));
 

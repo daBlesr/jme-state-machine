@@ -82,15 +82,6 @@ public class LookingAtSwordState extends State {
         neck.setLocalRotation(new Quaternion());
     }
 
-    @Override
-    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-    }
-
-    @Override
-    public void physicsTick(PhysicsSpace space, float timeStep) {
-
-    }
-
     private Quaternion clampHeadRotation(Quaternion rotation) {
         float[] angles = new float[3];
         rotation.toAngles(angles);

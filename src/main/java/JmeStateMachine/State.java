@@ -3,7 +3,7 @@ package JmeStateMachine;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.scene.Spatial;
 
-public abstract class State implements PhysicsTickListener {
+public abstract class State {
 
     protected Layer layer;
     protected Spatial spatial;

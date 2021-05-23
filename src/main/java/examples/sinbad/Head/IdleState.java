@@ -32,14 +32,4 @@ public class IdleState extends State {
     protected void onExit() {
 
     }
-
-    @Override
-    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-
-    }
-
-    @Override
-    public void physicsTick(PhysicsSpace space, float timeStep) {
-
-    }
 }

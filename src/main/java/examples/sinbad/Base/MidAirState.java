@@ -3,6 +3,7 @@ package examples.sinbad.Base;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.PhysicsTickListener;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
