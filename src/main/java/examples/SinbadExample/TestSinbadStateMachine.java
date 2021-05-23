@@ -2,8 +2,12 @@ package examples.SinbadExample;
 
 import JmeStateMachine.Layer;
 import JmeStateMachine.ModelStateMachine;
+import com.jme3.anim.AnimComposer;
+import com.jme3.anim.Armature;
+import com.jme3.anim.ArmatureMask;
 import com.jme3.anim.SkinningControl;
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.GhostControl;
@@ -31,6 +35,9 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
     public static Node sword;
 
+    public static AssetManager ASSETMANAGER;
+    public static Node ROOTNODE;
+
     public static void main(String[] args) {
         TestSinbadStateMachine app = new TestSinbadStateMachine();
         AppSettings settings = new AppSettings(true);
@@ -46,6 +53,9 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        ROOTNODE = rootNode;
+        ASSETMANAGER = assetManager;
+
         flyCam.setDragToRotate(true);
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(0, -0.5f, 0).normalizeLocal());
@@ -61,7 +71,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
         cam.setLocation(new Vector3f(-6, 3, 0));
 
         BulletAppState bulletAppState = new BulletAppState();
-
+        bulletAppState.setDebugEnabled(true);
         bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
         stateManager.attach(bulletAppState);
 
@@ -92,7 +102,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
         Node sinbad = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.j3o");
         sinbad.getControl(SkinningControl.class).getArmature().applyBindPose();
         sinbad.scale(0.5f);
-        sinbad.move(0, 2, 0);
+        sinbad.move(0, 5, 0);
 
         setupKeys();
         createSinbadStateMachine(sinbad);
@@ -133,8 +143,16 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
     private void createSinbadStateMachine (Node sinbad) {
 
+        Armature armature = sinbad.getControl(SkinningControl.class).getArmature();
+        AnimComposer animComposer = sinbad.getControl(AnimComposer.class);
+
+        animComposer.makeLayer("bot", getLowerArmature(armature));
+        animComposer.makeLayer("top", getChestArmature(armature));
+        animComposer.makeLayer("neck", getNeckArmature(armature));
+
         CapsuleCollisionShape capsuleCollisionShape = new CapsuleCollisionShape(1.2f, 2.5f);
-        RigidBodyControl rbc = new RigidBodyControl(capsuleCollisionShape, 1.0f);
+        RigidBodyControl rbc = new RigidBodyControl(capsuleCollisionShape, 20.0f);
+        rbc.setEnableSleep(false);
 
         sinbad.addControl(rbc);
 
@@ -149,7 +167,7 @@ public class TestSinbadStateMachine extends SimpleApplication {
 
         inputManager.addListener(modelBaseLayer, "Rotate Left", "Rotate Right");
         inputManager.addListener(modelBaseLayer, "Walk Forward", "Walk Backward");
-        inputManager.addListener(modelBaseLayer, "Jump", "Duck");
+        inputManager.addListener(modelBaseLayer, "Jump");
 
         Layer headLayer = new Layer();
         modelStateMachine.addLayer(headLayer);
@@ -188,4 +206,25 @@ public class TestSinbadStateMachine extends SimpleApplication {
         getPhysicsSpace().add(sword);
 
     }
+
+    public static ArmatureMask getNeckArmature (Armature armature) {
+        ArmatureMask mask = new ArmatureMask();
+        mask.addBones(armature, "Neck");
+        return mask;
+    }
+
+    public static ArmatureMask getChestArmature(Armature armature) {
+        ArmatureMask mask = ArmatureMask.createMask(armature, "Chest");
+        mask.removeJoints(armature, "Neck");
+        return mask;
+    }
+
+    public static ArmatureMask getLowerArmature(Armature armature) {
+        ArmatureMask mask = new ArmatureMask(armature);
+        mask.remove(getChestArmature(armature));
+        mask.remove(getNeckArmature(armature));
+        return mask;
+    }
+
+
 }

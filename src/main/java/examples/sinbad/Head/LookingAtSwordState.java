@@ -2,7 +2,9 @@ package examples.sinbad.Head;
 
 import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
-import com.jme3.anim.*;
+import com.jme3.anim.Armature;
+import com.jme3.anim.Joint;
+import com.jme3.anim.SkinningControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
@@ -13,24 +15,16 @@ public class LookingAtSwordState extends State {
 
     Armature armature;
     private SkinningControl skinningControl;
+    private Joint neck;
+    private Transform transform;
 
     @Override
     protected void onEnter() {
         skinningControl = getSpatial().getControl(SkinningControl.class);
         armature = skinningControl.getArmature();
+        neck = armature.getJoint("Neck");
 
-        AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
-
-        animComposer.makeLayer("head", ArmatureMask.createMask(
-            getSpatial().getControl(SkinningControl.class).getArmature(),
-            "Head"
-        ));
-
-        animComposer.setCurrentAction("IdleTop", "head");
-
-//        Joint head = armature.getJoint("Head");
-//        skinningControl.getAttachmentsNode()
-
+        transform = neck.getModelTransform().clone();
     }
 
     @Override
@@ -45,23 +39,29 @@ public class LookingAtSwordState extends State {
 
     @Override
     public StateChange controlUpdate(float tpf) {
-        Transform transform = armature.getJoint("Head")
-            .getModelTransform()
-            .clone()
-            .combineWithParent(skinningControl.getSpatial().getWorldTransform());
+        Vector3f swordLocationWorld = TestSinbadStateMachine.sword.getWorldTranslation();
 
-        Quaternion worldRotation = new Quaternion()
+        Vector3f worldDirectionVector = new Vector3f()
+            .set(getSpatial().getWorldTranslation().add(0, 2, 0))
+            .subtract(swordLocationWorld)
+            .normalize();
+
+        Vector3f directionInLocalSpace = new Vector3f();
+        System.out.println(getSpatial().getWorldTransform());
+        transform.clone().combineWithParent(getSpatial().getWorldTransform())
+            .getRotation()
+            .inverse()
+            .mult(worldDirectionVector, directionInLocalSpace);
+
+        Quaternion swordLookAtRotation = new Quaternion()
             .lookAt(
-                TestSinbadStateMachine.sword.getWorldTranslation(),
+                directionInLocalSpace,
                 Vector3f.UNIT_Y
             );
-        Quaternion localRotation = transform.getRotation().inverse().mult(worldRotation);
+//        swordLookAtRotation.multLocal(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Z));
 
+        neck.setLocalRotation(swordLookAtRotation);
 
-        armature.getJoint("Head")
-            .setLocalRotation(
-            localRotation
-        );
         return null;
     }
 
@@ -72,7 +72,8 @@ public class LookingAtSwordState extends State {
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-
+//        PhysicsLink neck = dac.findLink("Bone:Neck");
+//        neck.getRigidBody().setPhysicsRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y));
     }
 
     @Override

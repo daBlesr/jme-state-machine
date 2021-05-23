@@ -1,10 +1,7 @@
 package examples.sinbad.Base;
 
-import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
-import com.jme3.anim.ArmatureMask;
-import com.jme3.anim.SkinningControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -20,17 +17,9 @@ public class RunningState extends SinbadBaseState {
         super.onEnter();
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
 
-        animComposer.setCurrentAction("RunBase");
-
-        animComposer.makeLayer(
-            "top",
-            ArmatureMask.createMask(
-                getSpatial().getControl(SkinningControl.class).getArmature(),
-                "Chest"
-            )
-        );
-
+        animComposer.setCurrentAction("RunBase", "bot");
         animComposer.setCurrentAction("RunTop", "top");
+
         getPhysicsSpace().addTickListener(this);
     }
 
@@ -88,14 +77,14 @@ public class RunningState extends SinbadBaseState {
         velocity.addLocal(localWalkDirection);
 
         if (currentVelocity.distance(velocity) > FastMath.ZERO_TOLERANCE) {
-            rbc.setLinearVelocity(velocity);
+            physicsRigidBody.setLinearVelocity(velocity);
         }
     }
 
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
         super.physicsTick(space, timeStep);
-        rbc.getLinearVelocity(velocity);
+        physicsRigidBody.getLinearVelocity(velocity);
     }
 
     @Override
@@ -105,9 +94,6 @@ public class RunningState extends SinbadBaseState {
 
     @Override
     protected void onExit() {
-        AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
-        animComposer.removeLayer("top");
         getPhysicsSpace().removeTickListener(this);
-
     }
 }

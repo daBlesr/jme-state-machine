@@ -10,6 +10,7 @@ import com.jme3.anim.tween.action.ClipAction;
 import com.jme3.anim.tween.action.LinearBlendSpace;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
@@ -31,8 +32,10 @@ public class JumpState extends State {
         );
         blendedStartToLoop.setSpeed(3f);
         delayedConsumer = new DelayedConsumer(onFinishJumpLoopAction);
+
         animComposer.addAction("EnterJump", blendedStartToLoop);
-        animComposer.setCurrentAction("EnterJump");
+        animComposer.setCurrentAction("EnterJump", "bot");
+        animComposer.setCurrentAction("EnterJump", "top");
 
         getPhysicsSpace().addTickListener(this);
     }
@@ -50,10 +53,10 @@ public class JumpState extends State {
     @Override
     public void prePhysicsTick(PhysicsSpace space, float timeStep) {
         if (!hasJumped) {
-            RigidBodyControl rbc = getSpatial().getControl(RigidBodyControl.class);
-            rbc.applyCentralImpulse(
-                rbc.getPhysicsRotation()
-                    .mult(new Vector3f(0, rbc.getMass() * 8f, 0))
+            PhysicsRigidBody prb = getSpatial().getControl(RigidBodyControl.class);
+            prb.applyCentralImpulse(
+                prb.getPhysicsRotation()
+                    .mult(new Vector3f(0, prb.getMass() * 8f, 0))
             );
             hasJumped = true;
         }

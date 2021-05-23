@@ -7,6 +7,7 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -22,13 +23,13 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
     private Vector3f ray = new Vector3f();
     protected Quaternion characterRotation = new Quaternion();
     private Quaternion physicsRotation = new Quaternion();
-    protected RigidBodyControl rbc;
+    protected PhysicsRigidBody physicsRigidBody;
     protected Spatial collisionWithSword;
 
     @Override
     protected void onEnter() {
-        rbc = getSpatial().getControl(RigidBodyControl.class);
-        characterRotation.set(rbc.getPhysicsRotation());
+        physicsRigidBody = getSpatial().getControl(RigidBodyControl.class);
+        characterRotation.set(physicsRigidBody.getPhysicsRotation());
         physicsRotation.set(characterRotation);
 
         getPhysicsSpace().addCollisionListener(this);
@@ -39,7 +40,7 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
         checkOnGround();
 
         if (!characterRotation.isSimilar(physicsRotation, 0.001f)) {
-            rbc.setPhysicsRotation(characterRotation);
+            physicsRigidBody.setPhysicsRotation(characterRotation);
         }
     }
 
@@ -61,10 +62,8 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
     }
 
     private void checkOnGround () {
-        RigidBodyControl rbc = getSpatial().getControl(RigidBodyControl.class);
-
         location
-            .set(rbc.getPhysicsLocation());
+            .set(physicsRigidBody.getPhysicsLocation());
 
         ray
             .set(location)
@@ -74,7 +73,7 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
 
 
         for (PhysicsRayTestResult physicsRayTestResult : results) {
-            if (!physicsRayTestResult.getCollisionObject().equals(rbc)) {
+            if (!physicsRayTestResult.getCollisionObject().equals(physicsRigidBody)) {
                 onGround = true;
                 return;
             }
@@ -93,11 +92,14 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
         characterRotation.multLocal(new Quaternion().fromAngleAxis(angle, Vector3f.UNIT_Y));
     }
 
+    @Override
     public void collision(PhysicsCollisionEvent event) {
-        if ("Sword-ogremesh".equals(event.getNodeA().getName())) {
-            collisionWithSword = event.getNodeA();
-        } else if ("Sword-ogremesh".equals(event.getNodeB().getName())) {
-            collisionWithSword = event.getNodeB();
+        if (event.getObjectA() == physicsRigidBody || event.getObjectB() == physicsRigidBody) {
+            if (event.getNodeA() != null && "Sword-ogremesh".equals(event.getNodeA().getName())) {
+                collisionWithSword = event.getNodeA();
+            } else if (event.getNodeB() != null && "Sword-ogremesh".equals(event.getNodeB().getName())) {
+                collisionWithSword = event.getNodeB();
+            }
         }
     }
 }

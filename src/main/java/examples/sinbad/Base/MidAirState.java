@@ -1,10 +1,8 @@
 package examples.sinbad.Base;
 
-import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.math.Quaternion;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
@@ -15,7 +13,8 @@ public class MidAirState extends SinbadBaseState {
         super.onEnter();
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
 
-        animComposer.setCurrentAction("JumpLoop");
+        animComposer.setCurrentAction("JumpLoop", "top");
+        animComposer.setCurrentAction("JumpLoop", "bot");
 
         getPhysicsSpace().addTickListener(this);
     }

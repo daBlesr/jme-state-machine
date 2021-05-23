@@ -1,14 +1,10 @@
 package examples.sinbad.Base;
 
-import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
 import JmeStateMachine.anim.DelayedConsumer;
 import JmeStateMachine.anim.OnFinishedEventAction;
 import com.jme3.anim.AnimComposer;
-import com.jme3.anim.Armature;
-import com.jme3.anim.Joint;
 import com.jme3.anim.SkinningControl;
-import com.jme3.anim.tween.action.ClipAction;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -30,16 +26,17 @@ public class PickUpSwordState extends SinbadBaseState {
     protected void onEnter() {
         super.onEnter();
 
-        System.out.println("ENTERED PICK UP SWORD");
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
 
         OnFinishedEventAction onFinishJumpLoopAction = new OnFinishedEventAction(animComposer.getAnimClip("DrawSwords"));
         onFinishJumpLoopAction.setSpeed(0.2f);
         drawSwordsDone = new DelayedConsumer(onFinishJumpLoopAction);
-        animComposer.addAction("DrawSwordsAction", onFinishJumpLoopAction);
-        animComposer.setCurrentAction("DrawSwordsAction");
 
-        rbc.setLinearVelocity(Vector3f.ZERO);
+        animComposer.addAction("DrawSwordsAction", onFinishJumpLoopAction);
+        animComposer.setCurrentAction("DrawSwordsAction", "top");
+        animComposer.setCurrentAction("IdleBase", "bot");
+
+        physicsRigidBody.setLinearVelocity(Vector3f.ZERO);
         getPhysicsSpace().remove(sword);
 
         SkinningControl skinningControl = getSpatial().getControl(SkinningControl.class);

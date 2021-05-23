@@ -1,14 +1,8 @@
 package examples.sinbad.Base;
 
-import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
-import com.jme3.anim.ArmatureMask;
-import com.jme3.anim.SkinningControl;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
@@ -21,17 +15,9 @@ public class IdleState extends SinbadBaseState {
     protected void onEnter() {
         super.onEnter();
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
-        animComposer.setCurrentAction("IdleBase");
-
-        animComposer.makeLayer(
-            "top",
-            ArmatureMask.createMask(
-                getSpatial().getControl(SkinningControl.class).getArmature(),
-                "Chest"
-            )
-        );
-
+        animComposer.setCurrentAction("IdleBase", "bot");
         animComposer.setCurrentAction("IdleTop", "top");
+
         getPhysicsSpace().addTickListener(this);
     }
 
@@ -61,15 +47,15 @@ public class IdleState extends SinbadBaseState {
     @Override
     public void prePhysicsTick(PhysicsSpace space, float timeStep) {
         super.prePhysicsTick(space, timeStep);
-        if (velocity.length() > FastMath.ZERO_TOLERANCE) {
-            rbc.setLinearVelocity(Vector3f.ZERO);
-        }
+//        if (velocity.x > FastMath.ZERO_TOLERANCE || velocity.z > FastMath.ZERO_TOLERANCE) {
+        physicsRigidBody.setLinearVelocity(new Vector3f(0, velocity.y, 0));
+//        }
     }
 
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
         super.physicsTick(space, timeStep);
-        rbc.getLinearVelocity(velocity);
+        physicsRigidBody.getLinearVelocity(velocity);
     }
 
     @Override
@@ -79,8 +65,6 @@ public class IdleState extends SinbadBaseState {
 
     @Override
     protected void onExit() {
-        AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
-        animComposer.removeLayer("top");
         getPhysicsSpace().removeTickListener(this);
     }
 }

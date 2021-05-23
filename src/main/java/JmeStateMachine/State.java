@@ -1,6 +1,5 @@
 package JmeStateMachine;
 
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.scene.Spatial;
 

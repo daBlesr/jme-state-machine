@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.github.stephengold</groupId>
             <artifactId>Minie</artifactId>
-            <version>4.0.2</version>
+            <version>4.1.0+for33</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
