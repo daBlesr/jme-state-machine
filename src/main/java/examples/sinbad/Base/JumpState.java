@@ -5,6 +5,8 @@ import JmeStateMachine.StateChange;
 import JmeStateMachine.anim.DelayedConsumer;
 import JmeStateMachine.anim.OnFinishedEventAction;
 import com.jme3.anim.AnimComposer;
+import com.jme3.anim.Armature;
+import com.jme3.anim.SkinningControl;
 import com.jme3.anim.tween.action.BlendAction;
 import com.jme3.anim.tween.action.ClipAction;
 import com.jme3.anim.tween.action.LinearBlendSpace;
@@ -12,6 +14,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
+import examples.SinbadExample.TestSinbadStateMachine;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
@@ -22,6 +25,7 @@ public class JumpState extends State {
     @Override
     protected void onEnter() {
         AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
+        Armature armature = getSpatial().getControl(SkinningControl.class).getArmature();
 
         OnFinishedEventAction onFinishJumpLoopAction = new OnFinishedEventAction(animComposer.getAnimClip("JumpLoop"));
 
@@ -30,10 +34,13 @@ public class JumpState extends State {
             new ClipAction(animComposer.getAnimClip("JumpStart")),
             onFinishJumpLoopAction
         );
+
         blendedStartToLoop.setSpeed(3f);
+
         delayedConsumer = new DelayedConsumer(onFinishJumpLoopAction);
 
         animComposer.addAction("EnterJump", blendedStartToLoop);
+
         animComposer.setCurrentAction("EnterJump", "bot");
         animComposer.setCurrentAction("EnterJump", "top");
 

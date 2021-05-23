@@ -2,12 +2,15 @@ package examples.sinbad.Head;
 
 import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
+import com.jme3.anim.AnimComposer;
+import com.jme3.anim.SkinningControl;
 import com.jme3.bullet.PhysicsSpace;
 
 public class IdleState extends State {
     @Override
     protected void onEnter() {
-
+        AnimComposer animComposer = getSpatial().getControl(AnimComposer.class);
+        animComposer.setCurrentAction("IdleTop", "neck");
     }
 
     @Override

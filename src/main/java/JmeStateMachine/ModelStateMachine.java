@@ -34,4 +34,8 @@ public class ModelStateMachine extends AbstractControl {
     private AnimComposer getAnimComposer () {
         return getSpatial().getControl(AnimComposer.class);
     }
+
+    public List<Layer> getLayers() {
+        return layers;
+    }
 }

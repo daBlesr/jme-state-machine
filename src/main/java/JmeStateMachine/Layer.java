@@ -4,6 +4,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class Layer implements ActionListener, AnalogListener {
 
@@ -85,5 +86,9 @@ public class Layer implements ActionListener, AnalogListener {
 
     public boolean hasState(Class<?> stateClass) {
         return states.stream().anyMatch(s -> s.getClass().equals(stateClass));
+    }
+
+    public List<Layer> getLayers() {
+        return modelStateMachine.getLayers();
     }
 }

@@ -8,10 +8,6 @@ public abstract class State implements PhysicsTickListener {
     protected Layer layer;
     protected Spatial spatial;
 
-    protected void setLayer (Layer layer) {
-        this.layer = layer;
-    }
-
     abstract protected void onEnter ();
 
     abstract protected StateChange handleActionInput (String input, boolean isPressed, float tpf);
@@ -21,9 +17,18 @@ public abstract class State implements PhysicsTickListener {
 
     abstract protected void onExit ();
 
+    public Layer getLayer() {
+        return layer;
+    }
+
+    protected void setLayer (Layer layer) {
+        this.layer = layer;
+    }
+
     public Spatial getSpatial() { return spatial; }
 
     protected void setSpatial (Spatial spatial) {
         this.spatial = spatial;
     }
+
 }

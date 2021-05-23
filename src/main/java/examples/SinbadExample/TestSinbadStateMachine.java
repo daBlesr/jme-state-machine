@@ -71,7 +71,6 @@ public class TestSinbadStateMachine extends SimpleApplication {
         cam.setLocation(new Vector3f(-6, 3, 0));
 
         BulletAppState bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(true);
         bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
         stateManager.attach(bulletAppState);
 
@@ -114,31 +113,14 @@ public class TestSinbadStateMachine extends SimpleApplication {
     }
 
     private void setupKeys() {
-        inputManager.addMapping("Strafe Left",
-            new KeyTrigger(KeyInput.KEY_U),
-            new KeyTrigger(KeyInput.KEY_Z));
-        inputManager.addMapping("Strafe Right",
-            new KeyTrigger(KeyInput.KEY_O),
-            new KeyTrigger(KeyInput.KEY_X));
         inputManager.addMapping("Rotate Left",
-            new KeyTrigger(KeyInput.KEY_J),
             new KeyTrigger(KeyInput.KEY_LEFT));
         inputManager.addMapping("Rotate Right",
-            new KeyTrigger(KeyInput.KEY_L),
             new KeyTrigger(KeyInput.KEY_RIGHT));
         inputManager.addMapping("Walk Forward",
-            new KeyTrigger(KeyInput.KEY_I),
             new KeyTrigger(KeyInput.KEY_UP));
-        inputManager.addMapping("Walk Backward",
-            new KeyTrigger(KeyInput.KEY_K),
-            new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping("Jump",
-            new KeyTrigger(KeyInput.KEY_F),
             new KeyTrigger(KeyInput.KEY_SPACE));
-        inputManager.addMapping("Duck",
-            new KeyTrigger(KeyInput.KEY_G),
-            new KeyTrigger(KeyInput.KEY_LSHIFT),
-            new KeyTrigger(KeyInput.KEY_RSHIFT));
     }
 
     private void createSinbadStateMachine (Node sinbad) {
@@ -157,8 +139,6 @@ public class TestSinbadStateMachine extends SimpleApplication {
         sinbad.addControl(rbc);
 
         ModelStateMachine modelStateMachine = new ModelStateMachine();
-
-        // first we add the control to Sinbad
         sinbad.addControl(modelStateMachine);
 
         Layer modelBaseLayer = new Layer();
