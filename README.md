@@ -6,6 +6,8 @@ Implementation and architecture are based on the book "Game Programming Patterns
 In the examples directory, the code behind the video [demo](https://www.youtube.com/watch?v=UY6encoXvIE) is listed.
 
 The State Machine consists of four entities: *ModelStateMachine*, *Layer*, *State*, *StateChange*.
+See the [docs](https://github.com/daBlesr/jme-state-machine/docs) for a detailed documentation on each entity and best practices.
+
 One creates a state machine in jMonkeyEngine using the following:
 ```
 ModelStateMachine modelStateMachine = new ModelStateMachine();
