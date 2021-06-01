@@ -15,7 +15,7 @@ In the video this happens, when Sinbad runs into the sword, it picks it up, and 
 
 An example on how to change to a new state:
 
-```
+```java
 @Override
 protected StateChange handleActionInput(String input, boolean isPressed, float tpf) {
     if (input.equals("Walk Forward") && !isPressed) {
@@ -27,3 +27,6 @@ protected StateChange handleActionInput(String input, boolean isPressed, float t
 }
 ```
 returning `null` means the current state is remained.
+
+---
+Next Topic: [Layers](https://github.com/daBlesr/jme-state-machine/blob/main/docs/layers.md)
