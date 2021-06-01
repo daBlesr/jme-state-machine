@@ -12,7 +12,7 @@ The Documentation explains jme-state-machine in the following chapters:
 3. [Create a State](https://github.com/daBlesr/jme-state-machine/blob/main/docs/state.md)
 4. [Change to a new State](https://github.com/daBlesr/jme-state-machine/blob/main/docs/change%20state.md)
 5. [Layers](https://github.com/daBlesr/jme-state-machine/blob/main/docs/layers.md)
-6. [Complex cases](https://github.com/daBlesr/jme-state-machine/blob/main/docs/layers.md)
+6. [Complex cases](https://github.com/daBlesr/jme-state-machine/blob/main/docs/complex%20cases.md)
 
 
 
