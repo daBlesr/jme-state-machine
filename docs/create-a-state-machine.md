@@ -14,3 +14,6 @@ modelBaseLayer.setInitialState(new IdleState());
 
 How to create a state like the IdleState, is explained in the chapter about [State](https://github.com/daBlesr/jme-state-machine/blob/main/docs/state.md).
 More information on Layers is explained on the [Layers docs](https://github.com/daBlesr/jme-state-machine/blob/main/docs/layers.md)
+
+---
+Next Topic: [State](https://github.com/daBlesr/jme-state-machine/blob/main/docs/state.md)
