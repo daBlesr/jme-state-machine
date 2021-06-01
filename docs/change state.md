@@ -26,3 +26,4 @@ protected StateChange handleActionInput(String input, boolean isPressed, float t
     return null;
 }
 ```
+returning `null` means the current state is remained.
