@@ -34,11 +34,4 @@ if (contains(JumpState.class) && contains(RunningState.class)) {
 }
 ```
 
-```java
-Optional<StateChange> toStateClass(Class<? extends State> stateClass)
-```
-and 
-```java
-boolean contains(Class<? extends State> stateClass)
-```
-are helper functions to simplify logic of finding and choosing statesChanges.
+`toStateClass` and `contains` are available helper functions to simplify logic of finding and choosing statesChanges.
