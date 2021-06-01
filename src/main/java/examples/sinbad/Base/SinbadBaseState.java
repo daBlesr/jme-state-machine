@@ -51,7 +51,7 @@ public abstract class SinbadBaseState extends State implements PhysicsCollisionL
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
         if (collisionWithSword != null) {
             Spatial sword = collisionWithSword;
             collisionWithSword = null;

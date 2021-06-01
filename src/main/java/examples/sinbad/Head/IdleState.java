@@ -3,8 +3,8 @@ package examples.sinbad.Head;
 import JmeStateMachine.State;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
-import com.jme3.anim.SkinningControl;
-import com.jme3.bullet.PhysicsSpace;
+
+import java.util.List;
 
 public class IdleState extends State {
     @Override
@@ -24,7 +24,7 @@ public class IdleState extends State {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
         return null;
     }
 

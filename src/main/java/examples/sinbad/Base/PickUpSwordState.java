@@ -5,11 +5,12 @@ import JmeStateMachine.anim.DelayedConsumer;
 import JmeStateMachine.anim.OnFinishedEventAction;
 import com.jme3.anim.AnimComposer;
 import com.jme3.anim.SkinningControl;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+
+import java.util.List;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
@@ -58,7 +59,7 @@ public class PickUpSwordState extends SinbadBaseState {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
         if (drawSwordsDone.getAsBoolean()) {
             return StateChange.pop();
         }

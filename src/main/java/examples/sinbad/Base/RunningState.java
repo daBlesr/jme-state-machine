@@ -6,6 +6,8 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
+import java.util.List;
+
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
 public class RunningState extends SinbadBaseState {
@@ -88,8 +90,18 @@ public class RunningState extends SinbadBaseState {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
-        return super.controlUpdate(tpf);
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
+        StateChange possibleStateChange = super.controlUpdate(tpf, stateChanges);
+        if (possibleStateChange != null) {
+            return possibleStateChange;
+        }
+
+        if (stateChanges.size() == 1) {
+            return stateChanges.get(0);
+        }
+        // if multiple state changes were returned during this tick,
+        // we prioritize jump.
+        return toStateClass(JumpState.class).orElse(null);
     }
 
     @Override

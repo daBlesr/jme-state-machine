@@ -5,13 +5,14 @@ import JmeStateMachine.StateChange;
 import com.jme3.anim.Armature;
 import com.jme3.anim.Joint;
 import com.jme3.anim.SkinningControl;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import examples.SinbadExample.TestSinbadStateMachine;
 import examples.sinbad.Base.PickUpSwordState;
+
+import java.util.List;
 
 public class LookingAtSwordState extends State {
 
@@ -42,7 +43,7 @@ public class LookingAtSwordState extends State {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
 
         if (getLayer().getLayers().stream().anyMatch(l -> l.hasState(PickUpSwordState.class))) {
             return StateChange.to(new IdleState());

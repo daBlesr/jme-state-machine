@@ -5,6 +5,7 @@ import com.jme3.input.controls.AnalogListener;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class Layer implements ActionListener, AnalogListener {
 
@@ -37,12 +38,11 @@ public class Layer implements ActionListener, AnalogListener {
     }
 
     protected void controlUpdate (float tpf) {
-        StateChange stateChange = getCurrentState().controlUpdate(tpf);
+        StateChange stateChange = getCurrentState().controlUpdate(tpf, stateChangesQueue);
         if (stateChange != null) {
-            stateChangesQueue.add(stateChange);
+            changeState(stateChange);
         }
 
-        stateChangesQueue.forEach(this::changeState);
         stateChangesQueue.clear();
     }
 
@@ -86,6 +86,19 @@ public class Layer implements ActionListener, AnalogListener {
 
     public boolean hasState(Class<?> stateClass) {
         return states.stream().anyMatch(s -> s.getClass().equals(stateClass));
+    }
+
+    public Optional<StateChange> toStateClass(Class<? extends State> stateClass) {
+        return stateChangesQueue
+            .stream()
+            .filter(stateChange -> stateChange.hasNextStateOfClass(stateClass))
+            .findFirst();
+    }
+
+    public boolean contains(Class<? extends State> stateClass) {
+        return stateChangesQueue
+            .stream()
+            .anyMatch(stateChange -> stateChange.hasNextStateOfClass(stateClass));
     }
 
     public List<Layer> getLayers() {

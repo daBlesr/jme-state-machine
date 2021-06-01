@@ -5,8 +5,6 @@ import JmeStateMachine.StateChange;
 import JmeStateMachine.anim.DelayedConsumer;
 import JmeStateMachine.anim.OnFinishedEventAction;
 import com.jme3.anim.AnimComposer;
-import com.jme3.anim.Armature;
-import com.jme3.anim.SkinningControl;
 import com.jme3.anim.tween.action.BlendAction;
 import com.jme3.anim.tween.action.ClipAction;
 import com.jme3.anim.tween.action.LinearBlendSpace;
@@ -15,6 +13,8 @@ import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
+
+import java.util.List;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
@@ -74,7 +74,7 @@ public class JumpState extends State implements PhysicsTickListener {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
         if (delayedConsumer.getAsBoolean()) {
             return StateChange.to(new MidAirState());
         }

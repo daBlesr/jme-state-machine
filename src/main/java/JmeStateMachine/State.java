@@ -1,7 +1,9 @@
 package JmeStateMachine;
 
-import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.scene.Spatial;
+
+import java.util.List;
+import java.util.Optional;
 
 public abstract class State {
 
@@ -13,7 +15,7 @@ public abstract class State {
     abstract protected StateChange handleActionInput (String input, boolean isPressed, float tpf);
     abstract protected StateChange handleAnalogInput (String input, float value, float tpf);
 
-    public abstract StateChange controlUpdate(float tpf);
+    public abstract StateChange controlUpdate(float tpf, List<StateChange> stateChanges);
 
     abstract protected void onExit ();
 
@@ -31,4 +33,11 @@ public abstract class State {
         this.spatial = spatial;
     }
 
+    protected Optional<StateChange> toStateClass(Class<? extends State> stateClass) {
+        return layer.toStateClass(stateClass);
+    }
+
+    protected boolean contains(Class<? extends State> stateClass) {
+        return layer.contains(stateClass);
+    }
 }

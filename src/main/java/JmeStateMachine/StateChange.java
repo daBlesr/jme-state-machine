@@ -41,4 +41,15 @@ public abstract class StateChange {
             return state;
         }
     }
+
+    public boolean hasNextStateOfClass (Class<? extends State> stateClass) {
+        if (this instanceof StateChange.ToStateChange) {
+            State state = ((StateChange.ToStateChange) this).getState();
+            return state.getClass().equals(stateClass);
+        } else if (this instanceof StateChange.PushedStateChange) {
+            State state = ((StateChange.PushedStateChange) this).getState();
+            return state.getClass().equals(stateClass);
+        }
+        return false;
+    }
 }

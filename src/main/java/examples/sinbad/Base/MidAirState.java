@@ -3,11 +3,14 @@ package examples.sinbad.Base;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.PhysicsTickListener;
+
+import java.util.List;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
 public class MidAirState extends SinbadBaseState {
+
+    private boolean isWalkingForward = false;
 
     @Override
     protected void onEnter() {
@@ -22,11 +25,14 @@ public class MidAirState extends SinbadBaseState {
 
     @Override
     protected StateChange handleActionInput(String input, boolean isPressed, float tpf) {
-        return null;
+        return  null;
     }
 
     @Override
     protected StateChange handleAnalogInput(String input, float value, float tpf) {
+        if (input.equals("Walk Forward")) {
+            isWalkingForward = true;
+        }
         return null;
     }
 
@@ -41,11 +47,11 @@ public class MidAirState extends SinbadBaseState {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
-        super.controlUpdate(tpf);
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
+        super.controlUpdate(tpf, stateChanges);
 
         if (onGround()) {
-            return StateChange.to(new IdleState());
+            return StateChange.to(isWalkingForward ? new RunningState() : new IdleState());
         }
 
         return null;

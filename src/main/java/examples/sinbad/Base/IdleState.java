@@ -3,8 +3,9 @@ package examples.sinbad.Base;
 import JmeStateMachine.StateChange;
 import com.jme3.anim.AnimComposer;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.math.Vector3f;
+
+import java.util.List;
 
 import static com.jme3.bullet.PhysicsSpace.getPhysicsSpace;
 
@@ -24,7 +25,6 @@ public class IdleState extends SinbadBaseState {
 
     @Override
     protected StateChange handleActionInput(String input, boolean isPressed, float tpf) {
-
         if (input.equals("Walk Forward")) {
             return StateChange.to(new RunningState());
         } else if (input.equals("Jump")) {
@@ -35,9 +35,7 @@ public class IdleState extends SinbadBaseState {
 
     @Override
     protected StateChange handleAnalogInput(String input, float value, float tpf) {
-        if (input.equals("Walk Forward")) {
-            return StateChange.to(new RunningState());
-        } else if (input.equals("Rotate Left")) {
+        if (input.equals("Rotate Left")) {
             rotateLeft();
         } else if (input.equals("Rotate Right")) {
             rotateRight();
@@ -58,8 +56,13 @@ public class IdleState extends SinbadBaseState {
     }
 
     @Override
-    public StateChange controlUpdate(float tpf) {
-        return null;
+    public StateChange controlUpdate(float tpf, List<StateChange> stateChanges) {
+        if (stateChanges.size() == 1) {
+            return stateChanges.get(0);
+        }
+        // if multiple state changes were returned during this tick,
+        // we prioritize jump.
+        return toStateClass(JumpState.class).orElse(null);
     }
 
     @Override
