@@ -62,3 +62,5 @@ public class IdleState extends State {
     }
 }
 ```
+---
+Next Topic: [State Change](https://github.com/daBlesr/jme-state-machine/blob/main/docs/change%20state.md)
