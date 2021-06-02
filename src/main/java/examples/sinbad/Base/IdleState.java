@@ -62,7 +62,7 @@ public class IdleState extends SinbadBaseState {
         }
         // if multiple state changes were returned during this tick,
         // we prioritize jump.
-        return toStateClass(JumpState.class).orElse(null);
+        return prioritizeClass(JumpState.class, RunningState.class).orElse(null);
     }
 
     @Override

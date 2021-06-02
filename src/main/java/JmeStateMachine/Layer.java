@@ -88,11 +88,17 @@ public class Layer implements ActionListener, AnalogListener {
         return states.stream().anyMatch(s -> s.getClass().equals(stateClass));
     }
 
-    public Optional<StateChange> toStateClass(Class<? extends State> stateClass) {
-        return stateChangesQueue
-            .stream()
-            .filter(stateChange -> stateChange.hasNextStateOfClass(stateClass))
-            .findFirst();
+    public Optional<StateChange> prioritizeClass(Class<?> ...stateClasses) {
+        for (Class<?> stateClass : stateClasses) {
+            Optional<StateChange> s = stateChangesQueue
+                .stream()
+                .filter(stateChange -> stateChange.hasNextStateOfClass(stateClass))
+                .findFirst();
+            if (s.isPresent()) {
+                return s;
+            }
+        }
+        return Optional.empty();
     }
 
     public boolean contains(Class<? extends State> stateClass) {

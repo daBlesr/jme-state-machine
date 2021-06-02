@@ -42,7 +42,7 @@ public abstract class StateChange {
         }
     }
 
-    public boolean hasNextStateOfClass (Class<? extends State> stateClass) {
+    public boolean hasNextStateOfClass (Class<?> stateClass) {
         if (this instanceof StateChange.ToStateChange) {
             State state = ((StateChange.ToStateChange) this).getState();
             return state.getClass().equals(stateClass);

@@ -101,7 +101,7 @@ public class RunningState extends SinbadBaseState {
         }
         // if multiple state changes were returned during this tick,
         // we prioritize jump.
-        return toStateClass(JumpState.class).orElse(null);
+        return prioritizeClass(JumpState.class, IdleState.class).orElse(null);
     }
 
     @Override

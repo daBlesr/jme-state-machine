@@ -33,8 +33,8 @@ public abstract class State {
         this.spatial = spatial;
     }
 
-    protected Optional<StateChange> toStateClass(Class<? extends State> stateClass) {
-        return layer.toStateClass(stateClass);
+    protected Optional<StateChange> prioritizeClass(Class<?> ...stateClasses) {
+        return layer.prioritizeClass(stateClasses);
     }
 
     protected boolean contains(Class<? extends State> stateClass) {
