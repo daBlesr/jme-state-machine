@@ -25,7 +25,7 @@ if (stateChanges.size() == 1) {
 }
 // if multiple state changes were returned during this tick,
 // we prioritize jump.
-return toStateClass(JumpState.class).orElse(null);
+return prioritizeClass(JumpState.class, IdleState.class).orElse(null);
 ```
 or we could create our own more complex logic:
 ```java
@@ -34,4 +34,4 @@ if (contains(JumpState.class) && contains(RunningState.class)) {
 }
 ```
 
-`toStateClass` and `contains` are available helper functions to simplify logic of finding and choosing statesChanges.
+`prioritizeClass` and `contains` are available helper functions to simplify logic of finding and choosing statesChanges.
