@@ -69,4 +69,13 @@
         <url>https://github.com/daBlesr/jme-state-machine.git</url>
         <tag>HEAD</tag>
     </scm>
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>com.github.dablesr</id>
+            <name>jme-state-machine</name>
+            <url>https://github.com/daBlesr/jme-state-machine.git</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
 </project>
