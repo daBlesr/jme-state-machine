@@ -6,7 +6,7 @@
 
     <groupId>com.github.dablesr</groupId>
     <artifactId>jme-state-machine</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -63,4 +63,12 @@
             </plugin>
         </plugins>
     </build>
+    <scm>
+        <connection>https://github.com/daBlesr/jme-state-machine.git</connection>
+        <developerConnection>
+            scm:git:git@github.com:daBlesr/jme-state-machine.git
+        </developerConnection>
+        <url>https://github.com/daBlesr/jme-state-machine.git</url>
+        <tag>HEAD</tag>
+    </scm>
 </project>
